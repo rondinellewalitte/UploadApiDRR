@@ -1,8 +1,7 @@
 import { S3 } from "aws-sdk";
+import { Request } from "express";
 
-import { IFile, IUploadedFile } from "../../model";
-
-const allowedMimes = ["image/jpeg", "image/pjpeg", "image/png", "image/gif"];
+import { IUrl } from "../../model";
 
 class DeleteFileUseCase {
   private client: S3;
@@ -15,35 +14,26 @@ class DeleteFileUseCase {
     });
   }
 
-  private generateFileKey(file: IFile, timestamp: number): string {
-    return `${file.name}-${timestamp}.${file.extension}`;
-  }
+  private async deleteFile(request: Request): Promise<IUrl> {
+    const { domain, url } = request.headers;
 
-  private async uploadFile(file: IFile): Promise<IUploadedFile> {
-    if (!allowedMimes.includes(file.type)) {
-      return { error: new Error("Invalid file type.") };
-    }
-
-    const timestamp = Date.now();
-
-    const fileKey = this.generateFileKey(file, timestamp);
     await this.client
-      .putObject({
-        Bucket: this.bucketName,
-        Key: fileKey,
-        ContentType: file.type,
-        Body: file.content,
-        ACL: "public-read",
-      })
+      .deleteObject(
+        {
+          Bucket: process.env.AWS_S3_BUCKET,
+          Key: `${url}`,
+        },
+        (err, data) => {
+          if (err) console.log(err, err.stack);
+          else console.log(data);
+        }
+      )
       .promise();
-    return {
-      path: `${this.bucketName}/${fileKey}`,
-      name: fileKey,
-    };
+    return { message: "ok" };
   }
 
-  async execute(file: IFile): Promise<IUploadedFile | undefined> {
-    const dados = await this.uploadFile(file);
+  async execute(request: Request): Promise<IUrl> {
+    const dados = await this.deleteFile(request);
     return dados;
   }
 }

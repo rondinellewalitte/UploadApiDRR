@@ -28,11 +28,13 @@ uploadsRoutes.post(
   }
 );
 
-uploadsRoutes.delete("/", urlExists, async (req: Request, res: Response) => {
-  const { url } = req.headers;
-  const resposta = await 
-
-  return res.json({ message: "ok" });
-});
+uploadsRoutes.delete(
+  "/",
+  urlExists,
+  async (request: Request, response: Response) => {
+    const res = await deleteFileController.handle(request);
+    return response.json(res);
+  }
+);
 
 export { uploadsRoutes };

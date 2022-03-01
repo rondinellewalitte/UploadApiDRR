@@ -5,9 +5,9 @@ import { DeleteFileUseCase } from "./DeleteFileUseCase";
 
 class DeleteFileController {
   constructor(private deleteFileUseCase: DeleteFileUseCase) { }
-  handle(request: Request): IUrl {
-    const { file } = request.url;
-    return this.deleteFileUseCase.execute(file);
+  async handle(request: Request): Promise<IUrl> {
+    const res = await this.deleteFileUseCase.execute(request);
+    return res;
   }
 }
 
