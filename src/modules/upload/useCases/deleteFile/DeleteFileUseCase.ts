@@ -4,7 +4,7 @@ import { IFile, IUploadedFile } from "../../model";
 
 const allowedMimes = ["image/jpeg", "image/pjpeg", "image/png", "image/gif"];
 
-class UploadFileUseCase {
+class DeleteFileUseCase {
   private client: S3;
 
   private readonly bucketName = process.env.AWS_S3_BUCKET;
@@ -47,4 +47,4 @@ class UploadFileUseCase {
     return dados;
   }
 }
-export { UploadFileUseCase };
+export { DeleteFileUseCase };

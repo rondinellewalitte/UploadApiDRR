@@ -1,4 +1,5 @@
 export interface IUploadedFile {
-  name: string;
-  path: string;
+  name?: string;
+  path?: string;
+  error?: Error;
 }

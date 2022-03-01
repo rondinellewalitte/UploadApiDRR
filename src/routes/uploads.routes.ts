@@ -1,16 +1,38 @@
-import { Router } from "express";
+import { Router, Request, Response } from "express";
 import multer from "multer";
 
+import { fileHandler } from "../modules/upload/middlewares/filehandler";
+import { urlExists } from "../modules/upload/middlewares/urlexist";
+import { deleteFileController } from "../modules/upload/useCases/deleteFile";
 import { uploadFileController } from "../modules/upload/useCases/uploadsFile";
 
 const uploadsRoutes = Router();
 
-const upload = multer({
-  dest: "./tmp",
-});
+const upload = multer();
 
-uploadsRoutes.post("/", upload.single("file"), (request, response) => {
-  return uploadFileController.handle(request, response);
+uploadsRoutes.post(
+  "/",
+  upload.single("file"),
+  fileHandler,
+  async (req: Request, res: Response) => {
+    const { name, path, error } = await uploadFileController.handle({
+      body: req.body,
+    });
+
+    if (error) {
+      return res.status(200).json({ Error: error.message });
+    }
+    return res.status(200).json({
+      url: `https://upload-plataformas.s3.sa-east-1.amazonaws.com/${name}`,
+    });
+  }
+);
+
+uploadsRoutes.delete("/", urlExists, async (req: Request, res: Response) => {
+  const { url } = req.headers;
+  const resposta = await 
+
+  return res.json({ message: "ok" });
 });
 
 export { uploadsRoutes };
