@@ -7,7 +7,9 @@ const allowedMimes = ["image/jpeg", "image/pjpeg", "image/png", "image/gif"];
 class UploadFileUseCase {
   private client: S3;
 
-  private readonly bucketName = process.env.AWS_S3_BUCKET;
+  // private readonly bucketName = process.env.AWS_S3_BUCKET;
+  private readonly bucketName = "drraluno.com.br";
+  private readonly ACL = process.env.DEFAULT_FILES_ACL;
 
   constructor() {
     this.client = new S3({
@@ -16,7 +18,9 @@ class UploadFileUseCase {
   }
 
   private generateFileKey(file: IFile, timestamp: number): string {
-    return `${file.name}-${timestamp}.${file.extension}`;
+    const dateObj = new Date();
+    const month = dateObj.getUTCMonth() + 1;
+    return `${month}/${file.name}-${timestamp}.${file.extension}`;
   }
 
   private async uploadFile(file: IFile): Promise<IUploadedFile> {
@@ -33,7 +37,7 @@ class UploadFileUseCase {
         Key: fileKey,
         ContentType: file.type,
         Body: file.content,
-        ACL: "public-read",
+        ACL: this.ACL,
       })
       .promise();
     return {

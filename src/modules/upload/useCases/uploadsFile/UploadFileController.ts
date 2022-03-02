@@ -1,12 +1,10 @@
-import { Request } from "express";
-
-import { IUploadedFile } from "../../model";
+import { IUploadedFile, IFile } from "../../model";
 import { UploadFileUseCase } from "./UploadFileUseCase";
 
 class UploadFileController {
+  // eslint-disable-next-line prettier/prettier
   constructor(private uploadFileUseCase: UploadFileUseCase) { }
-  handle(request: Request): IUploadedFile {
-    const { file } = request.body;
+  async handle(file: IFile): Promise<IUploadedFile> {
     return this.uploadFileUseCase.execute(file);
   }
 }

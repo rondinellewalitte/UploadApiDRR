@@ -15,15 +15,15 @@ uploadsRoutes.post(
   upload.single("file"),
   fileHandler,
   async (req: Request, res: Response) => {
-    const { name, path, error } = await uploadFileController.handle({
-      body: req.body,
-    });
+    const { body } = req;
+
+    const { path, error } = await uploadFileController.handle(body);
 
     if (error) {
-      return res.status(200).json({ Error: error.message });
+      return res.status(404).json({ Error: error.message });
     }
     return res.status(200).json({
-      url: `https://upload-plataformas.s3.sa-east-1.amazonaws.com/${name}`,
+      url: `https://s3.sa-east-1.amazonaws.com/${path}`,
     });
   }
 );
