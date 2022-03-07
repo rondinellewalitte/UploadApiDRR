@@ -5,7 +5,9 @@ import { IFile } from "../model";
 
 export const fileHandler = (
   req: Request,
+
   res: Response,
+
   next: NextFunction
 ) => {
   const { file } = req;
@@ -29,13 +31,19 @@ export const fileHandler = (
 
   const mappedFiles: IFile = {
     name: file.originalname,
+
     type: file.mimetype,
+
     content: file.buffer,
+
     size: file.size,
+
     extension: `${file.originalname.split(".").pop()}`,
+
     bucketName,
   };
 
   Object.assign(req.body, mappedFiles);
+
   return next();
 };

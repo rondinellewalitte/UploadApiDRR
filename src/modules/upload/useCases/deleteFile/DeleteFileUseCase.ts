@@ -18,23 +18,30 @@ class DeleteFileUseCase {
     const { domain, url } = request.headers;
 
     await this.client
+
       .deleteObject(
         {
           Bucket: process.env.AWS_S3_BUCKET,
+
           Key: `${url}`,
         },
+
         (err, data) => {
           if (err) console.log(err, err.stack);
           else console.log(data);
         }
       )
+
       .promise();
+
     return { message: "ok" };
   }
 
   async execute(request: Request): Promise<IUrl> {
     const dados = await this.deleteFile(request);
+
     return dados;
   }
 }
+
 export { DeleteFileUseCase };

@@ -8,7 +8,9 @@ class UploadFileUseCase {
   private client: S3;
 
   // private readonly bucketName = process.env.AWS_S3_BUCKET;
+
   private readonly bucketName = "drraluno.com.br";
+
   private readonly ACL = process.env.DEFAULT_FILES_ACL;
 
   constructor() {
@@ -19,7 +21,9 @@ class UploadFileUseCase {
 
   private generateFileKey(file: IFile, timestamp: number): string {
     const dateObj = new Date();
+
     const month = dateObj.getUTCMonth() + 1;
+
     return `${month}/${file.name}-${timestamp}.${file.extension}`;
   }
 
@@ -31,24 +35,35 @@ class UploadFileUseCase {
     const timestamp = Date.now();
 
     const fileKey = this.generateFileKey(file, timestamp);
+
     await this.client
+
       .putObject({
         Bucket: this.bucketName,
+
         Key: fileKey,
+
         ContentType: file.type,
+
         Body: file.content,
+
         ACL: this.ACL,
       })
+
       .promise();
+
     return {
       path: `${this.bucketName}/${fileKey}`,
+
       name: fileKey,
     };
   }
 
   async execute(file: IFile): Promise<IUploadedFile | undefined> {
     const dados = await this.uploadFile(file);
+
     return dados;
   }
 }
+
 export { UploadFileUseCase };
